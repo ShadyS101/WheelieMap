@@ -1,0 +1,26 @@
+<html> <div id="map" style="height: 500px;"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script>
+    // Create map
+    const map = L.map('map').setView([51.5074, -0.1278], 12);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Fetch data from your Flask backend
+    fetch("/get_accessible_places")
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(place => {
+                L.marker([place.lat, place.lon])
+                    .addTo(map)
+                    .bindPopup(place.name);
+            });
+        });
+</script>
+</html>
