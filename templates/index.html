@@ -1,26 +1,43 @@
-<html> <div id="map" style="height: 500px;"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Accessible Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script>
+        fetch("/get_accessible_places")
+            .then(res => res.json())
+            .then(data => {
+                // Center map on user location
+                const map = L.map('map').setView([data.location.lat, data.location.lon], 14);
 
-<script>
-    // Create map
-    const map = L.map('map').setView([51.5074, -0.1278], 12);
+                // Add OSM tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
 
-    // Add OpenStreetMap tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Fetch data from your Flask backend
-    fetch("/get_accessible_places")
-        .then(res => res.json())
-        .then(data => {
-            data.forEach(place => {
-                L.marker([place.lat, place.lon])
+                // Add a marker for user location
+                L.marker([data.location.lat, data.location.lon])
                     .addTo(map)
-                    .bindPopup(place.name);
-            });
-        });
-</script>
+                    .bindPopup("📍 You are here")
+                    .openPopup();
+
+                // Add markers for accessible places
+                data.places.forEach(place => {
+                    L.marker([place.lat, place.lon])
+                        .addTo(map)
+                        .bindPopup(place.name);
+                });
+            })
+            .catch(err => console.error("Error fetching accessible places:", err));
+    </script>
+</body>
 </html>

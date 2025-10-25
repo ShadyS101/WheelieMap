@@ -1,5 +1,6 @@
-import overpy
 from flask import Flask, jsonify, render_template
+import overpy
+import geocoder
 
 app = Flask(__name__)
 api = overpy.Overpass()
@@ -10,18 +11,30 @@ def index():
 
 @app.route("/get_accessible_places")
 def get_accessible_places():
-    query = """
-    [out:json];j
-    area["name"="London"]->.searchArea;
-    node["amenity"="restaurant"]["wheelchair"="yes"](area.searchArea);
+    g = geocoder.ip('me')
+    if not g.ok or not g.latlng:
+        return jsonify({"error": "Unable to get location"}), 400
+
+    lat, lon = g.latlng
+    radius = 1000  
+
+    query = f"""
+    [out:json];
+    node(around:{radius},{lat},{lon})["wheelchair"="yes"];
     out body;
     """
+
     result = api.query(query)
+
     places = [
         {"name": n.tags.get("name", "Unnamed"), "lat": n.lat, "lon": n.lon}
         for n in result.nodes
     ]
-    return jsonify(places)
+
+    return jsonify({
+        "location": {"lat": lat, "lon": lon},
+        "places": places
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
