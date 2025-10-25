@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Unsafe Locations</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { height: 90vh; width: 100%; }
+        body { font-family: Arial; }
+    </style>
+</head>
+<body>
+    <h2>Click on the map to report an unsafe location</h2>
+    <div id="map"></div>
+
+    <script>
+    // Initialize map
+    var map = L.map('map');
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Center map on user location if available
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            map.setView([position.coords.latitude, position.coords.longitude], 15);
+            L.marker([position.coords.latitude, position.coords.longitude])
+                .addTo(map)
+                .bindPopup("You are here")
+                .openPopup();
+        }, function() {
+            map.setView([37.7749, -122.4194], 13); // fallback
+        });
+    } else {
+        map.setView([37.7749, -122.4194], 13);
+    }
+
+    // Load existing reports from backend
+    fetch('/reports')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(location => {
+                L.marker([location.lat, location.lng])
+                    .addTo(map)
+                    .bindPopup("Unsafe location reported!");
+            });
+        });
+
+    // Add new report on click
+    map.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        // Add marker immediately
+        L.marker([lat, lng]).addTo(map).bindPopup("Unsafe location reported!").openPopup();
+
+        // Send to backend
+        fetch('/report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat: lat, lng: lng })
+        }).then(res => res.json()).then(data => console.log(data.message));
+    });
+</script>
+
+</body>
+</html>
