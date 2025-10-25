@@ -5,7 +5,7 @@ app = Flask(__name__)
 api = overpy.Overpass()
 
 @app.route("/")
-def index():
+def index()
     return render_template("index.html")
 
 @app.route("/get_accessible_places")
