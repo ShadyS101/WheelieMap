@@ -95,4 +95,110 @@ if (faqCards) {
         fadeUpElements.forEach(el => observer.observe(el));
     }
 
+    const mapContainer = document.getElementById('map');
+    if (mapContainer) {
+        console.log("Initializing map...");
+
+        // Load Leaflet only if available (for safety)
+        if (typeof L === 'undefined') {
+            console.error("Leaflet is not loaded. Make sure to include the Leaflet <script> and <link> tags in your HTML.");
+            return;
+        }
+
+        // Initialize map
+        const map = L.map('map').setView([0, 0], 2);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Hazard marker colors
+        const colors = {
+            'Slippery': 'blue',
+            'Low Lighting': 'orange',
+            'Isolated': 'red'
+        };
+
+        // Center map on user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const { latitude, longitude } = pos.coords;
+                map.setView([latitude, longitude], 15);
+
+                const userMarker = L.circleMarker([latitude, longitude], {
+                    radius: 8,
+                    color: 'green',
+                    fillColor: 'green',
+                    fillOpacity: 0.8
+                }).addTo(map);
+                userMarker.bindPopup("📍 You are here").openPopup();
+            }, err => {
+                console.warn("Could not get current location:", err.message);
+                map.setView([37.7749, -122.4194], 13);
+            });
+        }
+
+        // Fetch existing hazard reports
+        fetch('http://localhost:5000/report', {
+            method: 'GET'
+        })
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(loc => {
+                const color = colors[loc.type] || 'gray';
+                L.circleMarker([loc.lat, loc.lng], {
+                    radius: 8,
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                  .bindPopup(`<b>${loc.type}</b><br>${loc.description || 'No description'}`);
+            });
+        })
+        .catch(err => console.error("Error fetching reports:", err));
+        
+        // Handle hazard selection buttons
+        const buttons = document.querySelectorAll('#controls button');
+        let selectedType = null;
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedType = btn.innerText;
+            });
+        });
+
+        // Add hazard marker when map clicked
+        map.on('click', e => {
+            if (!selectedType) {
+                alert('Please select a hazard type first!');
+                return;
+            }
+
+            const description = prompt("Add a short description (optional):");
+            const { lat, lng } = e.latlng;
+            const color = colors[selectedType] || 'gray';
+
+            L.circleMarker([lat, lng], {
+                radius: 8,
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.8
+            }).addTo(map)
+              .bindPopup(`<b>${selectedType}</b><br>${description || 'No description'}`)
+              .openPopup();
+
+            // Send report to backend
+            fetch('http://localhost:5000/report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat, lng, type: selectedType, description })
+            })
+            .then(res => res.json())
+            .then(data => console.log(data.message))
+            .catch(err => console.error("Error sending report:", err));
+        });
+    }
+
 });

@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -44,6 +46,16 @@
                 <h1>Safety That Meets You <span class="highlight-text">Exactly Where You Are</span></h1>
                 <p>A service that keeps you up to date with the safest routes and locations.</p>
             </div>
+        </section>
+
+        <section class="map-section">
+            <h2 style="text-align:center; margin-top:20px;">Report Unsafe Locations</h2>
+            <div id="controls">
+                <button id="slippery">Slippery</button>
+                <button id="lowlight">Low Lighting</button>
+                <button id="isolated">Isolated</button>
+            </div>
+            <div id="map"></div>
         </section>
     </main>
 

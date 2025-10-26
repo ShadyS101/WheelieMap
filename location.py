@@ -46,7 +46,7 @@ def report():
 
     return jsonify({'message': 'Location reported successfully!'})
 
-@app.route('/report', methods=['POST'])
+@app.route('/report', methods=['GET'])
 def get_report():
     conn = sqlite3.connect('reports.db')
     c = conn.cursor()
