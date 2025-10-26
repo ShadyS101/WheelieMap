@@ -26,9 +26,9 @@
 </head>
 <body>
   <div id="controls">
-    <button id="slippery">Slippery</button>
-    <button id="lowlight">Low Lighting</button>
-    <button id="isolated">Isolated</button>
+    <button data-type="Slippery" id="slippery">Slippery</button>
+    <button data-type="Low lighting" id="lowlight">Low Lighting</button>
+    <button data-type="Isolated" id="isolated">Isolated</button>
   </div>
   <div id="map"></div>
 
@@ -94,7 +94,7 @@
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        selectedType = btn.innerText;
+        selectedType = btn.dataset.type;
       });
     });
 
@@ -104,30 +104,43 @@
         alert('Please select a hazard type first!');
         return;
       }
-
-      const description = prompt("Add a short description (optional):");
+    
+      const description = prompt("Add a short description (optional):") || "";
       const { lat, lng } = e.latlng;
-
+    
+      console.log("Submitting report:", {
+        lat,
+        lng,
+        type: selectedType,
+        description
+      });
+    
       const color = colors[selectedType] || 'gray';
       L.circleMarker([lat, lng], {
         radius: 8,
         color: color,
         fillColor: color,
         fillOpacity: 0.8
-      }).addTo(map)
-        .bindPopup(`<b>${selectedType}</b><br>${description || 'No description'}`)
-        .openPopup();
-
-      // Send report to backend
+      })
+      .addTo(map)
+      .bindPopup(`<b>${selectedType}</b><br>${description || 'No description'}`)
+      .openPopup();
+    
       fetch('http://localhost:5000/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat, lng, type: selectedType, description })
+        body: JSON.stringify({
+          lat: lat,
+          lng: lng,
+          type: selectedType,
+          description: description
+        })
       })
       .then(res => res.json())
-      .then(data => console.log(data.message))
+      .then(data => console.log("Server says:", data))
       .catch(err => console.error("Error sending report:", err));
     });
+    
   </script>
 </body>
 </html>
