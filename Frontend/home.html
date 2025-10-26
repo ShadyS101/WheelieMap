@@ -4,13 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WheelieMap | Welcome</title>
+
+    <link rel="icon" type="image/png" href="img/wheelie.png">
+
+    <!-- Base site styles (design tokens, layout, header/footer, etc.) -->
     <link rel="stylesheet" href="style.css">
-    <!-- Font Imports from Google Fonts -->
+
+    <!-- Chat widget styles -->
+    <link rel="stylesheet" href="chat.css">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 </head>
 <body>
 
@@ -41,35 +52,75 @@
                 <video src="https://vod-progressive.akamaized.net/exp=1721666998~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F1668%2F17%2F433343468%2F1887332253.mp4~hmac=a4e698889aa092dd9d1f3d6dd2c03565f17178d0f1882d2c7300481005b736b4/vimeo-prod-skyfire-std-us/01/1668/17/433343468/1887332253.mp4" autoplay loop muted playsinline></video>
             </div>
             <div class="hero-overlay"></div>
-            <!-- New Hero Content -->
             <div class="hero-content">
                 <h1>Safety That Meets You <span class="highlight-text">Exactly Where You Are</span></h1>
                 <p>A service that keeps you up to date with the safest routes and locations.</p>
             </div>
         </section>
 
+        <!-- Map + Chat Section -->
         <section class="map-section">
             <h2 style="text-align:center; margin-top:20px;">Report Unsafe Locations</h2>
+
             <div id="controls">
-                <button id="slippery">Slippery</button>
-                <button id="lowlight">Low Lighting</button>
-                <button id="isolated">Isolated</button>
+                <button id="slippery" data-type="Slippery">Slippery</button>
+                <button id="lowlight" data-type="Low Lighting">Low Lighting</button>
+                <button id="isolated" data-type="Isolated">Isolated</button>
             </div>
+
             <div id="map"></div>
+
+            <!-- Chat Launcher (floating button in bottom-right) -->
+            <button id="safety-chat-launcher" class="chat-launcher-btn" aria-label="Open safety assistant"></button>
+
+            <!-- Chat Panel (hidden until opened) -->
+            <div id="safety-chat-panel" class="chat-panel">
+                <div class="chat-card">
+                    <!-- Header / Brand Bar -->
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <div class="chat-avatar">
+                                <!-- Wheelie icon inside header -->
+                                <img src="img/wheelie.png" alt="WheelieMap logo">
+                            </div>
+                            <div class="chat-header-text">
+                                <div class="chat-title">WheelieMap Safety Assistant</div>
+                                <div class="chat-subtitle">Route safety and conditions</div>
+                            </div>
+                        </div>
+                        <button id="chat-close-btn" class="chat-close-btn" aria-label="Close chat">✕</button>
+                    </div>
+
+                    <!-- Message history -->
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="bot-msg bubble bot">
+                            Hi! I'm a virtual assistant here to help you evaluate route safety, lighting, isolation, and recent hazard reports.
+                        </div>
+                    </div>
+
+                    <!-- Input row -->
+                    <div class="chat-input-row">
+                        <input
+                            id="chat-input"
+                            class="chat-input"
+                            placeholder="Ask about a location or route..."
+                        />
+                        <button id="chat-send-btn" class="chat-send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
-           <!-- Footer Section -->
+    <!-- Footer Section -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-grid">
-                <!-- Column 1: About WheelieMap -->
                 <div class="footer-column footer-column-about">
                     <h3>WheelieMap</h3>
                     <p>A service that keeps you up to date with the safest routes and locations. Safety for you, exactly as you are.</p>
                 </div>
 
-                <!-- Column 2: Quick Links -->
                 <div class="footer-column footer-column-links">
                     <h3>Quick Links</h3>
                     <ul>
@@ -79,7 +130,6 @@
                     </ul>
                 </div>
 
-                <!-- Column 3: Contact Info -->
                 <div class="footer-column footer-column-contact">
                     <h3>Contact Info</h3>
                     <ul>
@@ -93,7 +143,7 @@
             <hr class="footer-divider">
 
             <div class="footer-bottom">
-                 <div class="footer-tagline">
+                <div class="footer-tagline">
                     <p>WheelieMap operates with a commitment to justice, safety, and community care.</p>
                 </div>
                 <div class="footer-legal">
@@ -101,39 +151,15 @@
                     <a href="#">Terms & Conditions</a>
                 </div>
             </div>
-             <div class="footer-copyright">
-                <p>© 2025 WheelieMap. All rights reserved. Made with ❤️ for safety and community.</p>
+
+            <div class="footer-copyright">
+                <p>© 2025 WheelieMap. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript File -->
+    <!-- main page logic (map, markers, chat open/send) -->
     <script src="script.js"></script>
-    <script type="module">
-        // --- This is the new, important part ---
-        // It imports the Tina Dev UI, which creates the pencil icon
-        import { TinaDevUI } from '/tina/dev-ui.js'
-      
-        document.addEventListener('DOMContentLoaded', (event) => {
-          // This makes sure the page is fully loaded before we do anything
-          
-          // Mount the Tina UI
-          const tina = new TinaDevUI()
-          tina.mount()
-      
-          // Now, fetch your content
-          fetch('/content/home.json')
-            .then(response => response.json())
-            .then(data => {
-              if (data.hero_headline) {
-                document.getElementById('hero_headline').textContent = data.hero_headline;
-              }
-              if (data.hero_subheadline) {
-                document.getElementById('hero_subheadline').textContent = data.hero_subheadline;
-              }
-            })
-            .catch(error => console.error('Error fetching content:', error));
-        });
-      </script>
+
 </body>
 </html>

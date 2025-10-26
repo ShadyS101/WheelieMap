@@ -1,3 +1,6 @@
+const API_BASE = "http://127.0.0.1:5000"; // map + DB backend
+const AI_BASE  = "http://127.0.0.1:7000"; // chatbot backend
+
 document.addEventListener("DOMContentLoaded", function() {
 
     // --- Mobile Navigation ---
@@ -7,6 +10,76 @@ document.addEventListener("DOMContentLoaded", function() {
         mobileMenuToggle.addEventListener('click', () => {
             document.body.classList.toggle('nav-open');
             navLinks.classList.toggle('active');
+        });
+    }
+
+    // --- CHATBOT WIDGET SETUP ---
+
+    const launcher   = document.getElementById('safety-chat-launcher');
+    const panel      = document.getElementById('safety-chat-panel');
+    const closeBtn   = document.getElementById('chat-close-btn');
+    const messagesEl = document.getElementById('chat-messages');
+    const inputEl    = document.getElementById('chat-input');
+    const sendBtn    = document.getElementById('chat-send-btn');
+
+    function appendMessage(text, sender) {
+        if (!messagesEl) return;
+        const div = document.createElement('div');
+        div.className = sender === 'user' ? 'user-msg' : 'bot-msg';
+        div.innerHTML = text;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function openChat() {
+        if (!panel) return;
+        panel.style.display = 'flex';
+        if (inputEl) inputEl.focus();
+    }
+
+    function closeChat() {
+        if (!panel) return;
+        panel.style.display = 'none';
+    }
+
+    if (launcher) {
+        launcher.addEventListener('click', openChat);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeChat);
+    }
+
+    function sendMessage() {
+        if (!inputEl) return;
+        const userText = inputEl.value.trim();
+        if (!userText) return;
+
+        appendMessage(userText, 'user');
+        inputEl.value = '';
+
+        fetch(`${AI_BASE}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userText })
+        })
+        .then(res => res.json())
+        .then(data => {
+            appendMessage(data.reply, 'bot');
+        })
+        .catch(err => {
+            console.error('chat error:', err);
+            appendMessage("Sorry, I couldn't reach the safety assistant.", 'bot');
+        });
+    }
+
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendMessage);
+    }
+    if (inputEl) {
+        inputEl.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
     }
 
@@ -50,7 +123,6 @@ document.addEventListener("DOMContentLoaded", function() {
             question.addEventListener('click', () => {
                 const isActive = card.classList.contains('active');
 
-                // close others
                 faqCards.forEach(otherCard => {
                     if (otherCard !== card) {
                         otherCard.classList.remove('active');
@@ -58,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 });
 
-                // toggle this one
                 if (!isActive) {
                     card.classList.add('active');
                     answer.style.maxHeight = answer.scrollHeight + 'px';
@@ -88,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- SAFETY MAP SECTION ---
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
-        return; // page doesn't have a map section
+        return; // page doesn't have a map section (like on FAQ page)
     }
 
     console.log("Initializing map...");
@@ -97,9 +168,6 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Leaflet is not loaded. Include Leaflet <script> and <link>.");
         return;
     }
-
-    // IMPORTANT: use the same origin Flask is serving on
-    const API_BASE = "http://127.0.0.1:5000";
 
     // hazard colors
     const colors = {
@@ -110,26 +178,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // track which hazard type user chose
     let selectedType = null;
-    const buttons = document.querySelectorAll('#controls button');
-    buttons.forEach(btn => {
+    const hazardButtons = document.querySelectorAll('#controls button');
+    hazardButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            buttons.forEach(b => b.classList.remove('selected'));
+            hazardButtons.forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
 
-            // use data-type for clean, stable value
             selectedType = btn.dataset.type || btn.innerText.trim();
             console.log("Selected hazard:", selectedType);
         });
     });
 
-    // init map at 0,0 then recenter
+    // init map
     const map = L.map('map').setView([0, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // center on user
+    // center map to user when possible
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             const { latitude, longitude } = pos.coords;
@@ -148,7 +215,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // helper to place a marker with popup
     function drawMarker(lat, lng, type, description, timestamp) {
         const color = colors[type] || 'gray';
         const prettyDesc = description || 'No description';
@@ -164,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .bindPopup(`<b>${type}</b><br>${prettyDesc}${prettyTime}`);
     }
 
-    // 1) LOAD EXISTING REPORTS FROM BACKEND
+    // Load existing reports
     fetch(`${API_BASE}/reports`, {
         method: 'GET'
     })
@@ -185,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Error fetching reports:", err);
     });
 
-    // 2) HANDLE CLICK ON MAP TO CREATE NEW REPORT
+    // Click map to submit new hazard
     map.on('click', e => {
         console.log("Map clicked at:", e.latlng);
 
@@ -204,10 +270,10 @@ document.addEventListener("DOMContentLoaded", function() {
             description
         });
 
-        // optimistic display
+        // optimistic UI
         drawMarker(lat, lng, selectedType, description, new Date().toISOString());
 
-        // send to backend to save in DB
+        // persist to DB
         fetch(`${API_BASE}/report`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
