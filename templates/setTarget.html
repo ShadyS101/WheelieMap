@@ -17,19 +17,38 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    button {
-      padding: 8px 12px;
+    .button {
+      background-color: white;
       border: none;
-      border-radius: 5px;
+      color: black;
+      padding: 16px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      transition-duration: 0.4s;
       cursor: pointer;
-      font-weight: bold;
-      background: white;
-      border: 1px solid #ccc;
+    }
+
+    .button1:hover {
+      background-color: #004761;
+      color: white;
+    }
+
+    .button2:hover {
+      background-color: #807406;
+      color: white;
+    }
+
+    .button3:hover {
+      background-color: #6f0d06;
+      color: white;
     }
     .selected {
-      background-color: #007bff;
+      background-color: #000000;
       color: white;
-      border-color: #007bff;
+      border-color: #000000;
     }
     #hint {
       font-size: 13px;
@@ -40,9 +59,9 @@
 <body>
   <div id="controls">
     <div style="font-weight:600;">Tap map to report:</div>
-    <button data-type="Slippery" id="slippery">Slippery</button>
-    <button data-type="Low Lighting" id="lowlight">Low Lighting</button>
-    <button data-type="Isolated" id="isolated">Isolated</button>
+    <button data-type="Slippery" id="slippery" class="button button1">Slippery</button>
+    <button data-type="Low Lighting" id="lowlight" class="button button2">Low Lighting</button>
+    <button data-type="Isolated" id="isolated" class="button button3">Isolated</button>
     <div id="hint">(pick one, then click the map)</div>
   </div>
 
@@ -60,7 +79,7 @@
     // Hazard marker colors
     const colors = {
       'Slippery': 'blue',
-      'Low Lighting': 'orange',
+      'Low Lighting': 'black',
       'Isolated': 'red'
     };
 
@@ -70,7 +89,7 @@
         const { latitude, longitude } = pos.coords;
         map.setView([latitude, longitude], 16);
 
-        const userMarker = L.circleMarker([latitude, longitude], {
+        const userMarker = L.marker([latitude, longitude], {
           radius: 8,
           color: 'green',
           fillColor: 'green',
