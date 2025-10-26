@@ -48,11 +48,11 @@ def report():
     hazard_type = data.get('type', 'Unknown')
     description = data.get('description', '')
 
-    timestamp = datetime.datetime.now().isoformat()
+    timestamp = datetime.datetime.now().isoformat
 
     print("Parsed:", lat, lng, hazard_type, description)
 
-    # sanity check
+    # sanity check 
     if lat is None or lng is None:
         return jsonify({'error': 'lat and lng are required'}), 400
 
