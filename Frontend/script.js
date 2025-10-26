@@ -171,9 +171,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // hazard colors
     const colors = {
-        "Slippery": "blue",
-        "Low Lighting": "orange",
-        "Isolated": "red"
+      'Slippery': 'blue',
+      'Low Lighting': 'yellow',
+      'Isolated': 'red',
+      'Crowded Area': 'purple',
+      'Low Visibility': 'gray',
+      'Others': 'black'
     };
 
     // track which hazard type user chose
@@ -202,11 +205,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const { latitude, longitude } = pos.coords;
             map.setView([latitude, longitude], 15);
 
-            const userMarker = L.circleMarker([latitude, longitude], {
-                radius: 8,
-                color: 'green',
-                fillColor: 'green',
-                fillOpacity: 0.8
+            const userMarker = L.marker([latitude, longitude], {
+            radius: 8,
+            color: 'dark green',
+            fillColor: 'dark green',
+            fillOpacity: 0.8
             }).addTo(map);
             userMarker.bindPopup("📍 You are here").openPopup();
         }, err => {

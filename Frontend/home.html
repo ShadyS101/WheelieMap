@@ -63,9 +63,13 @@
             <h2 style="text-align:center; margin-top:20px;">Report Unsafe Locations</h2>
 
             <div id="controls">
-                <button id="slippery" data-type="Slippery">Slippery</button>
-                <button id="lowlight" data-type="Low Lighting">Low Lighting</button>
-                <button id="isolated" data-type="Isolated">Isolated</button>
+            <div style="font-weight:600;">Tap map to report:</div>
+            <button data-type="Slippery" id="slippery" class="button button1">Slippery</button>
+            <button data-type="Low Lighting" id="lowlight" class="button button2">Low Lighting</button>
+            <button data-type="Isolated" id="isolated" class="button button3">Isolated</button>
+            <button data-type="Crowded Area" id="crowdedarea" class="button button4">Crowded Area</button>
+            <button data-type="Low Visibility" id="lowvisibility" class="button button5">Low Visibility</button>
+            <button data-type="Others" id="others" class="button button6">Others</button>
             </div>
 
             <div id="map"></div>

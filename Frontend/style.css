@@ -355,6 +355,42 @@ Buttons
     color: white;
 }
 
+    .button1:hover {
+      background-color: #0000FF;
+      color: white;
+    }
+
+    .button2:hover {
+      background-color: #FFFF00;
+      color: white;
+    }
+
+    .button3:hover {
+      background-color: #FF0000;
+      color: white;
+    }
+
+    .button4:hover {
+      background-color: #800080;
+      color: white;
+    }
+
+    .button5:hover {
+      background-color: #808080;
+      color: white;
+    }
+
+    .button6:hover {
+      background-color: #000000;
+      color: white;
+    }
+
+    .selected {
+      background-color: #000000;
+      color: rgb(255, 255, 255);
+      border-color: #000000;
+    }
+
 /* ---
 Testimonial Carousel (About Page)
 --- */
@@ -1060,7 +1096,7 @@ Definitive Footer Legal Links Correction
   }
   
   #controls button.selected {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
   }
   
