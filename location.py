@@ -48,7 +48,7 @@ def report():
     hazard_type = data.get('type', 'Unknown')
     description = data.get('description', '')
 
-    timestamp = datetime.datetime.now().isoformat
+    timestamp = datetime.datetime.now().isoformat()
 
     print("Parsed:", lat, lng, hazard_type, description)
 
