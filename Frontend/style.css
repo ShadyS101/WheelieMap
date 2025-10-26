@@ -2,11 +2,11 @@
 Root Variables & Global Styles
 --- */
 :root {
-    --color-bg: #F4E3DC; /* Muted Beige/Pink */
-    --color-surface: #FFFFFF;
-    --color-primary: #550878; /* Rich Purple */
-    --color-primary-dark: #460C61; /* Dark Purple */
-    --color-accent: #F1D2FF; /* Lavender Accent */
+    --color-bg: #dae7d1; /* Muted Beige/Pink */
+    --color-surface: #d5e7c9;
+    --color-primary: #087831; /* Rich Purple */
+    --color-primary-dark: #0b8a53; /* Dark Green */
+    --color-accent: #d2ffe5; /* Lavender Accent */
     --color-text: #333333;
     --color-text-subtle: #555555;
 
@@ -96,7 +96,7 @@ Header & Navigation
     position: sticky;
     top: 0;
     z-index: 1000;
-    background-color: rgba(244, 227, 220, 0.85); /* Semi-transparent bg */
+    background-color: rgba(218, 238, 215, 0.85); /* Semi-transparent bg */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow-sm);
@@ -226,7 +226,7 @@ Hero Section (Homepage) - UPDATED
     background-size: cover;
     background-position: center;
     /* NEW background image */
-    background-image: url('https://images.unsplash.com/photo-1542662565-7e4b66bae529?auto=format&fit=crop&w=1920&q=80');
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/bd/Pastures_at_the_foot_of_a_mountain_%28Unsplash%29.jpg');
 }
 
 /* We are removing the video for this design */
@@ -255,7 +255,7 @@ Hero Section (Homepage) - UPDATED
 }
 /* NEW style for the highlighted text */
 .hero-content .highlight-text {
-    color: #FADADD; /* A soft pink to match the image */
+    color: #ddf6ed; /* A soft pink to match the image */
     font-weight: 400; /* Lighter font weight for contrast */
 }
 .hero-content p {
