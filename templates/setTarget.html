@@ -32,32 +32,32 @@
     }
 
     .button1:hover {
-      background-color: #004761;
+      background-color: #0000FF;
       color: white;
     }
 
     .button2:hover {
-      background-color: #807406;
+      background-color: #FFFF00;
       color: white;
     }
 
     .button3:hover {
-      background-color: #6f0d06;
+      background-color: #FF0000;
       color: white;
     }
 
     .button4:hover {
-      background-color: #310038;
+      background-color: #800080;
       color: white;
     }
 
     .button5:hover {
-      background-color: #1e3926;
+      background-color: #808080;
       color: white;
     }
 
     .button6:hover {
-      background-color: #4a1703;
+      background-color: #000000;
       color: white;
     }
 
@@ -126,6 +126,33 @@
       map.setView([37.7749, -122.4194], 13); // fallback
       alert("Geolocation not supported by your browser.");
     }
+    
+    // Icons
+    const icons = {
+      'Slippery': './img/snowflake.png',
+      'Low Lighting': './img/light.png',
+      'Isolated': './img/lonely.png',
+      'Crowded Area': './img/crowded.png',
+      'Low Visibility': './img/visibility.png',
+      'Others': './img/other.png'
+    };
+
+    var leafletIcons ={};
+    for (const type in icons){
+        leafletIcons[type] =L.icon({
+          iconUrl: icons[type],
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
+        })
+    };
+
+    var testIcon = L.icon({
+          iconUrl: 'snowflake.png',
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
+        });
 
     // Draw marker helper
     function drawMarker(lat, lng, type, description, timestamp) {
