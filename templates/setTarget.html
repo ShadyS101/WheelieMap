@@ -61,7 +61,7 @@
           fillColor: 'green',
           fillOpacity: 0.8
         }).addTo(map);
-        userMarker.bindPopup("📍 You are here").openPopup();
+        userMarker.bindPopup("Current Location").openPopup();
       }, err => {
         console.warn("Could not get current location:", err.message);
         map.setView([37.7749, -122.4194], 13); // fallback to San Francisco
