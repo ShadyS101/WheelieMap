@@ -161,5 +161,32 @@
     <!-- main page logic (map, markers, chat open/send) -->
     <script src="script.js"></script>
 
+    <script type="module">
+        // --- This is the new, important part ---
+        // It imports the Tina Dev UI, which creates the pencil icon
+        import { TinaDevUI } from '/tina/dev-ui.js'
+      
+        document.addEventListener('DOMContentLoaded', (event) => {
+          // This makes sure the page is fully loaded before we do anything
+          
+          // Mount the Tina UI
+          const tina = new TinaDevUI()
+          tina.mount()
+      
+          // Now, fetch your content
+          fetch('/content/home.json')
+            .then(response => response.json())
+            .then(data => {
+              if (data.hero_headline) {
+                document.getElementById('hero_headline').textContent = data.hero_headline;
+              }
+              if (data.hero_subheadline) {
+                document.getElementById('hero_subheadline').textContent = data.hero_subheadline;
+              }
+            })
+            .catch(error => console.error('Error fetching content:', error));
+        });
+      </script>
+
 </body>
 </html>
