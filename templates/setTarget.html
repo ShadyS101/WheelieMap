@@ -45,9 +45,25 @@
       background-color: #6f0d06;
       color: white;
     }
+
+    .button4:hover {
+      background-color: #310038;
+      color: white;
+    }
+
+    .button5:hover {
+      background-color: #1e3926;
+      color: white;
+    }
+
+    .button6:hover {
+      background-color: #4a1703;
+      color: white;
+    }
+
     .selected {
       background-color: #000000;
-      color: white;
+      color: rgb(255, 255, 255);
       border-color: #000000;
     }
     #hint {
@@ -62,6 +78,9 @@
     <button data-type="Slippery" id="slippery" class="button button1">Slippery</button>
     <button data-type="Low Lighting" id="lowlight" class="button button2">Low Lighting</button>
     <button data-type="Isolated" id="isolated" class="button button3">Isolated</button>
+    <button data-type="Crowded Area" id="crowdedarea" class="button button4">Crowded Area</button>
+    <button data-type="Low Visibility" id="lowvisibility" class="button button5">Low Visibility</button>
+    <button data-type="Others" id="others" class="button button6">Others</button>
     <div id="hint">(pick one, then click the map)</div>
   </div>
 
@@ -80,7 +99,10 @@
     const colors = {
       'Slippery': 'blue',
       'Low Lighting': 'yellow',
-      'Isolated': 'red'
+      'Isolated': 'red',
+      'Crowded Area': 'purple',
+      'Low Visibility': 'gray',
+      'Others': 'black'
     };
 
     // Try to zoom to user location
@@ -91,8 +113,8 @@
 
         const userMarker = L.marker([latitude, longitude], {
           radius: 8,
-          color: 'green',
-          fillColor: 'green',
+          color: 'dark green',
+          fillColor: 'dark green',
           fillOpacity: 0.8
         }).addTo(map);
         userMarker.bindPopup("Current Location").openPopup();
