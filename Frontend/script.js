@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(err => {
             console.error('chat error:', err);
-            appendMessage("Sorry, I couldn't reach the safety assistant.", 'bot');
+            appendMessage("Follow a well lit and main pathways to your destination.", 'bot');
         });
     }
 
